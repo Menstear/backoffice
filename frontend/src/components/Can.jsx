@@ -1,10 +1,12 @@
 import React from "react";
 import { useCan } from "../auth/useCan";
 
-export default function Can({ mask, superAdminOnly = false, children, fallback = null }) {
-  const { has, isSuperAdmin } = useCan();
+// label: "read/all" | "write/activity" | "write/recruit-form" | "write/club-info" | "write/all"
+// superAdminOnly: true이면 isSuperAdmin인 경우만 렌더링
+export default function Can({ label, superAdminOnly = false, children, fallback = null }) {
+  const { can, isSuperAdmin } = useCan();
 
   if (superAdminOnly && !isSuperAdmin) return fallback;
-  if (mask && !has(mask)) return fallback;
+  if (label && !can(label)) return fallback;
   return children;
 }

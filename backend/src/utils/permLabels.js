@@ -1,5 +1,14 @@
 const { Permission, WRITE_ALL_MASK } = require("../config/permissions");
 
+// 유효한 permission label 목록. PATCH /:id/perm validation에서 참조한다.
+const VALID_PERM_LABELS = [
+  "read/all",
+  "write/activity",
+  "write/recruit-form",
+  "write/club-info",
+  "write/all",
+];
+
 function permToLabels(perm) {
   const labels = [];
   if (perm & Permission.READ) labels.push("read/all");
@@ -28,4 +37,4 @@ function labelsToPerm(labels = []) {
   return perm;
 }
 
-module.exports = { permToLabels, labelsToPerm };
+module.exports = { permToLabels, labelsToPerm, VALID_PERM_LABELS };

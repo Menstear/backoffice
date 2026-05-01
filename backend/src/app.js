@@ -43,9 +43,8 @@ const boAdminInvitesRouter = require("./routes/boAdminInvites");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 
-const allowedOrigins = process.env.BO_ALLOWED_ORIGINS.split(",")
-  .map((v) => v.trim())
-  .filter(Boolean);
+// CORS와 CSRF(boAuth.js)가 동일 상수를 공유한다. 파싱 로직은 config/allowedOrigins.js에서 관리한다.
+const allowedOrigins = require("./config/allowedOrigins");
 
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.json());

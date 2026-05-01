@@ -22,6 +22,12 @@ function denyMutation(next) {
 }
 
 // Enforce append-only policy at model level.
+// save()는 신규 document(isNew=true)일 때 INSERT, 기존 document일 때 UPDATE를 실행한다.
+// 기존 document 수정 시도를 차단해 append-only 정책의 우회 경로를 완전히 막는다.
+adminAuditLogSchema.pre("save", function (next) {
+  if (!this.isNew) return denyMutation(next);
+  next();
+});
 adminAuditLogSchema.pre("updateOne", denyMutation);
 adminAuditLogSchema.pre("updateMany", denyMutation);
 adminAuditLogSchema.pre("findOneAndUpdate", denyMutation);

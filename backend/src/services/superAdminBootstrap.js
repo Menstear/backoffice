@@ -21,13 +21,24 @@ async function bootstrapSuperAdmin() {
 
   // Intentional bootstrap policy:
   // SUPER_ADMIN_EMAIL is always enforced with max admin permissions.
-  // Manual perm downgrades are reverted on next server bootstrap.
-  const needsUpdate = !user.isSuperAdmin || user.perm !== superPerm;
+  // Manual perm downgrades or deactivations are reverted on next server bootstrap.
+  const needsUpdate = !user.isSuperAdmin || user.perm !== superPerm || !user.isActive;
   if (needsUpdate) {
+    const prevPerm = user.perm;
+    const prevIsSuperAdmin = user.isSuperAdmin;
+    const prevIsActive = user.isActive;
     user.isSuperAdmin = true;
     user.perm = superPerm;
+    user.isActive = true;
     await user.save();
-    console.log("[LOG] super admin elevated by bootstrap");
+    // G섹션: DB 값이 환경변수 정책과 불일치할 경우 경고 로그를 남겨야 한다.
+    console.warn(
+      `[WARN] super admin mismatch detected for ${email}. ` +
+        `isSuperAdmin: ${prevIsSuperAdmin} → true, ` +
+        `perm: ${prevPerm} → ${superPerm}, ` +
+        `isActive: ${prevIsActive} → true. ` +
+        `Auto-corrected by bootstrap. 운영 알림 필요.`
+    );
   }
 }
 
